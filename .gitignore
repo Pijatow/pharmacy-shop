@@ -1,0 +1,149 @@
+###############################################################################
+#  PROJECT-SPECIFIC (custom first, so overrides are obvious)
+###############################################################################
+
+# Keep the folder but ignore generated migration files
+**/migrations/*
+!**/migrations/__init__.py
+
+# Local settings & DBs
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Logs
+*.log
+
+# Editor / IDE
+.vscode
+# Uncomment the next line for a hard “nuclear” ignore of JetBrains settings
+#.idea/
+
+###############################################################################
+#  PYTHON & DJANGO
+###############################################################################
+
+# Byte-compiled / optimized files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Environment & packaging
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.Python
+build/
+dist/
+develop-eggs/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Poetry / pipenv / pdm / uv
+poetry.toml
+.pdm.toml
+.pdm-python
+.pdm-build/
+__pypackages__/
+#Pipfile.lock
+#poetry.lock
+#pdm.lock
+#uv.lock
+
+# PyInstaller
+*.manifest
+*.spec
+
+###############################################################################
+#  TESTING & COVERAGE
+###############################################################################
+
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+###############################################################################
+#  TOOL-SPECIFIC
+###############################################################################
+
+# Ruff / mypy / pytype / pyre
+.ruff_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+
+# LSP
+pyrightconfig.json
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# Sphinx
+docs/_build/
+
+# MkDocs
+/site
+
+# Jupyter / IPython
+.ipynb_checkpoints
+profile_default/
+ipython_config.py
+
+# Spyder / Rope
+.spyderproject
+.spyproject
+.ropeproject
+
+# SageMath
+*.sage.py
+
+# Scrapy
+.scrapy
+
+# Flask
+instance/
+.webassets-cache
+
+###############################################################################
+#  OTHER
+###############################################################################
+
+# Translations
+*.mo
+*.pot
+
+# Cython debug
+cython_debug/
+
+# PyPI config
+.pypirc
