@@ -13,9 +13,14 @@ class Brand(models.Model):
     # pictures = models.ImageField()
     description = models.TextField(max_length=1000, blank=True)
 
+    def __str__(self):
+        return self.name
+
 
 def get_unknown_brand():
-    brand, created = Brand.objects.get_or_create(name="Unknown", description="Unavailable")
+    brand, created = Brand.objects.get_or_create(
+        name="Unknown", description="Unavailable"
+    )
     return brand
 
 
@@ -37,6 +42,9 @@ class Product(models.Model):
     last_updated_at = models.DateTimeField(auto_now=True)
     tags = TaggableManager(blank=True)
 
+    def __str__(self):
+        return self.brand.name.upper() + " - " + self.name
+
 
 class Collection(models.Model):
     creator = models.ForeignKey(
@@ -46,6 +54,9 @@ class Collection(models.Model):
     description = models.TextField(max_length=500)
     products = models.ManyToManyField(Product, related_name="products")
 
+    def __str__(self):
+        return self.name
+
 
 class Comment(models.Model):
     author = models.ForeignKey(
@@ -53,3 +64,6 @@ class Comment(models.Model):
     )
     content = models.TextField(max_length=1000)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.product.name.upper() + " | " + self.author.username
