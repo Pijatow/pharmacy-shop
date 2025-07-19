@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "taggit",
     "accounts",
+    "products",
 ]
 
 
