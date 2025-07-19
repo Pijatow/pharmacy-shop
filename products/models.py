@@ -7,7 +7,7 @@ from taggit.managers import TaggableManager
 
 class Brand(models.Model):
     creator = models.ForeignKey(
-        CustomUser, on_delete=models.SET_NULL, related_name="products"
+        CustomUser, on_delete=models.PROTECT, related_name="brands"
     )
     name = models.CharField(max_length=200, unique=True, blank=False)
     # pictures = models.ImageField()
@@ -15,17 +15,18 @@ class Brand(models.Model):
 
 
 def get_unknown_brand():
-    return Brand.objects.get_or_create(name="Unknown", description="Unavailable")
+    brand, created = Brand.objects.get_or_create(name="Unknown", description="Unavailable")
+    return brand
 
 
 class Product(models.Model):
     creator = models.ForeignKey(
-        CustomUser, on_delete=models.SET_NULL, related_name="products"
+        CustomUser, on_delete=models.PROTECT, related_name="products"
     )
     name = models.CharField(max_length=200, unique=True, blank=False)
     brand = models.ForeignKey(
-        on_delete=models.SET_DEFAULT(),
-        default=get_unknown_brand(),
+        Brand,
+        on_delete=models.SET(get_unknown_brand),
         related_name="products",
     )
     # pictures = models.ImageField()
@@ -39,7 +40,7 @@ class Product(models.Model):
 
 class Collection(models.Model):
     creator = models.ForeignKey(
-        CustomUser, on_delete=models.SET_NULL, related_name="products"
+        CustomUser, on_delete=models.PROTECT, related_name="collections"
     )
     name = models.CharField(max_length=200)
     description = models.TextField(max_length=500)
@@ -48,7 +49,7 @@ class Collection(models.Model):
 
 class Comment(models.Model):
     author = models.ForeignKey(
-        CustomUser, on_delete=models.SET_NULL, related_name="comments"
+        CustomUser, on_delete=models.PROTECT, related_name="comments"
     )
     content = models.TextField(max_length=1000)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
