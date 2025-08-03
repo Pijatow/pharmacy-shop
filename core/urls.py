@@ -1,5 +1,13 @@
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+
+from products.views import (
+    ProductViewSet,
+    BrandViewSet,
+    CollectionViewSet,
+    CommentViewSet,
+)
 
 from rest_framework_simplejwt.views import (
     token_blacklist,
@@ -9,14 +17,20 @@ from rest_framework_simplejwt.views import (
 )
 
 SIMPLE_JWT_URLS = [
-    path("", token_obtain_pair, name='jwt-obtain'),
-    path("refresh/", token_refresh, name='jwt-refresh'),
-    path("revoke/", token_blacklist, name='jwt-revoke'),
-    path("verify/", token_verify, name='jwt-verify'),
+    path("", token_obtain_pair, name="jwt-obtain"),
+    path("refresh/", token_refresh, name="jwt-refresh"),
+    path("revoke/", token_blacklist, name="jwt-revoke"),
+    path("verify/", token_verify, name="jwt-verify"),
 ]
+
+router = DefaultRouter()
+router.register(r"products", ProductViewSet, basename="product")
+router.register(r"brands", BrandViewSet, basename="brand")
+router.register(r"collections", CollectionViewSet, basename="collection")
+router.register(r"comments", CommentViewSet, basename="comment")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("jwt/", include(SIMPLE_JWT_URLS))
-
+    path("jwt/", include(SIMPLE_JWT_URLS)),
+    path("", include(router.urls)),
 ]
