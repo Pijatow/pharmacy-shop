@@ -52,7 +52,7 @@ class Collection(models.Model):
     )
     name = models.CharField(max_length=200)
     description = models.TextField(max_length=500)
-    products = models.ManyToManyField(Product, related_name="products")
+    products = models.ManyToManyField(Product, related_name="collections")
 
     def __str__(self):
         return self.name
@@ -63,7 +63,7 @@ class Comment(models.Model):
         CustomUser, on_delete=models.PROTECT, related_name="comments"
     )
     content = models.TextField(max_length=1000)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='comments')
 
     def __str__(self):
         return self.product.name.upper() + " | " + self.author.username
