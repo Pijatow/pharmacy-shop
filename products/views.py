@@ -1,7 +1,12 @@
 from rest_framework.viewsets import ModelViewSet
 
 from .models import Brand, Product, Collection, Comment
-from .serializers import ProductSerializer, CommentSerializer, CollectionSerializer, BrandSerializer
+from .serializers import (
+    ProductSerializer,
+    CommentSerializer,
+    CollectionSerializer,
+    BrandSerializer,
+)
 
 
 class ProductViewSet(ModelViewSet):
