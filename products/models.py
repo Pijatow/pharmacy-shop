@@ -62,7 +62,7 @@ class Comment(models.Model):
     author = models.ForeignKey(
         CustomUser, on_delete=models.PROTECT, related_name="comments"
     )
-    content = models.TextField(max_length=1000)
+    text = models.TextField(max_length=1000)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='comments')
 
     def __str__(self):
