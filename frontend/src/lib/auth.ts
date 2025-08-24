@@ -37,3 +37,16 @@ export async function loginUser(data: LoginInput) {
     const response = await api.post("/jwt/", data); // This is the token_obtain_pair endpoint
     return response.data;
 }
+
+
+export async function logoutUser(refreshToken: string) {
+    try {
+        // Note: Your DRF backend might expect 'token' instead of 'refresh'
+        // depending on the blacklist app's configuration.
+        // We will assume 'refresh' for now as it's common.
+        await api.post("/jwt/revoke/", { refresh: refreshToken });
+    } catch (error) {
+        // Fail silently. The user is logged out on the frontend anyway.
+        console.error("Token revocation failed", error);
+    }
+}

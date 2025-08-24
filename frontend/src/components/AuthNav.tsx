@@ -2,14 +2,17 @@
 
 import Link from "next/link";
 import { useAuthStore } from "@/store/auth";
+import { logoutUser } from "@/lib/auth";
 
 export function AuthNav() {
-  const { accessToken, logout } = useAuthStore();
+  const { accessToken, refreshToken, logout } = useAuthStore();
   const isLoggedIn = !!accessToken;
 
-  const handleLogout = () => {
-    // Here we will add the call to the revoke token endpoint later
-    logout();
+  const handleLogout = async () => {
+    if (refreshToken) {
+      await logoutUser(refreshToken);
+    }
+    logout(); // This clears the state on the frontend
   };
 
   if (isLoggedIn) {
