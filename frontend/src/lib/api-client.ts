@@ -9,15 +9,18 @@ export const api = axios.create({
     "Content-Type": "application/json",
     Accept: "application/json",
   },
-  withCredentials: true, // Important for cookies if you use them later
+  withCredentials: true,
 });
 
 // Add a request interceptor to include the token in every request
 api.interceptors.request.use(
   (config) => {
-    const { accessToken } = useAuthStore.getState();
-    if (accessToken) {
-      config.headers.Authorization = `Bearer ${accessToken}`;
+    // Only access the store if the code is running in a browser
+    if (typeof window !== "undefined") {
+      const { accessToken } = useAuthStore.getState();
+      if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+      }
     }
     return config;
   },
