@@ -35,6 +35,6 @@ router.register(r"comments", CommentViewSet, basename="comment")
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("jwt/", include(SIMPLE_JWT_URLS)),
-    path("profile/", UserProfileView.as_view(), name="profile"),
+    path("api/profile/", UserProfileView.as_view(), name="profile"),
     path("api/", include(router.urls)),
 ]
