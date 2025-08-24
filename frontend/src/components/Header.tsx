@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AuthNav } from "./AuthNav";
+import { CartIndicator } from "./CartIndicator";
 
 export function Header() {
   return (
@@ -24,13 +25,8 @@ export function Header() {
           >
             محصولات
           </Link>
-          <Link
-            href="/cart"
-            className="hover:text-[color:var(--color-brand)] transition-colors"
-          >
-            سبد خرید
-            {/* We will add the item count back in a moment */}
-          </Link>
+          <CartIndicator />
+
           <div className="w-px h-5 bg-[color:var(--color-accent)]/30" />
           <AuthNav />
         </nav>

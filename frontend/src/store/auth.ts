@@ -1,6 +1,7 @@
 "use client";
 
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 type AuthState = {
     accessToken: string | null;
@@ -11,12 +12,19 @@ type AuthState = {
     logout: () => void;
 };
 
-export const useAuthStore = create<AuthState>((set) => ({
-    accessToken: null,
-    refreshToken: null,
-    user: null,
-    setTokens: (access, refresh) =>
-        set({ accessToken: access, refreshToken: refresh }),
-    setUser: (user) => set({ user }),
-    logout: () => set({ accessToken: null, refreshToken: null, user: null }),
-}));
+export const useAuthStore = create(
+    persist<AuthState>(
+        (set) => ({
+            accessToken: null,
+            refreshToken: null,
+            user: null,
+            setTokens: (access, refresh) =>
+                set({ accessToken: access, refreshToken: refresh }),
+            setUser: (user) => set({ user }),
+            logout: () => set({ accessToken: null, refreshToken: null, user: null }),
+        }),
+        {
+            name: "shiraz-daru-auth", // unique name for localStorage key
+        }
+    )
+);

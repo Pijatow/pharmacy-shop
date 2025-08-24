@@ -1,6 +1,7 @@
 "use client";
 
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export type CartLineItem = {
   id: string;
@@ -11,67 +12,83 @@ export type CartLineItem = {
 
 type CartState = {
   items: Record<string, CartLineItem>;
-  add: (product: Record<string, unknown>, unitPrice?: number | null, qty?: number) => void;
+  add: (
+    product: Record<string, unknown>,
+    unitPrice?: number | null,
+    qty?: number
+  ) => void;
   remove: (id: string) => void;
   setQuantity: (id: string, quantity: number) => void;
   clear: () => void;
 };
 
-export const useCartStore = create<CartState>((set) => ({
-  items: {},
-  add: (product, unitPrice = null, qty = 1) =>
-    set((state) => {
-      let safeId: string;
-      if (product && typeof product === "object" && "id" in product) {
-        const maybeId = (product as { id: unknown }).id;
-        safeId = typeof maybeId === "string" || typeof maybeId === "number" ? String(maybeId) : JSON.stringify(product);
-      } else {
-        safeId = JSON.stringify(product);
-      }
-      const existing = state.items[safeId];
-      const nextQty = (existing?.quantity ?? 0) + qty;
-      return {
-        items: {
-          ...state.items,
-          [safeId]: {
-            id: safeId,
-            product,
-            unitPrice:
-              unitPrice ??
-              (product && typeof product === "object" && "price" in product
-                ? (typeof (product as { price: unknown }).price === "number"
-                    ? ((product as { price: number }).price)
-                    : null)
-                : null),
-            quantity: nextQty,
-          },
-        },
-      };
+export const useCartStore = create(
+  persist<CartState>(
+    (set) => ({
+      items: {},
+      add: (product, unitPrice = null, qty = 1) =>
+        set((state) => {
+          let safeId: string;
+          if (product && typeof product === "object" && "id" in product) {
+            const maybeId = (product as { id: unknown }).id;
+            safeId =
+              typeof maybeId === "string" || typeof maybeId === "number"
+                ? String(maybeId)
+                : JSON.stringify(product);
+          } else {
+            safeId = JSON.stringify(product);
+          }
+          const existing = state.items[safeId];
+          const nextQty = (existing?.quantity ?? 0) + qty;
+          return {
+            items: {
+              ...state.items,
+              [safeId]: {
+                id: safeId,
+                product,
+                unitPrice:
+                  unitPrice ??
+                  (product &&
+                    typeof product === "object" &&
+                    "price" in product
+                    ? typeof (product as { price: unknown }).price === "number"
+                      ? (product as { price: number }).price
+                      : null
+                    : null),
+                quantity: nextQty,
+              },
+            },
+          };
+        }),
+      remove: (id) =>
+        set((state) => {
+          const next = { ...state.items };
+          delete next[id];
+          return { items: next };
+        }),
+      setQuantity: (id, quantity) =>
+        set((state) => {
+          if (quantity <= 0) {
+            const next = { ...state.items };
+            delete next[id];
+            return { items: next };
+          }
+          const existing = state.items[id];
+          if (!existing) return state;
+          return {
+            items: {
+              ...state.items,
+              [id]: { ...existing, quantity },
+            },
+          };
+        }),
+      clear: () => set({ items: {} }),
     }),
-  remove: (id) =>
-    set((state) => {
-      const next = { ...state.items };
-      delete next[id];
-      return { items: next };
-    }),
-  setQuantity: (id, quantity) =>
-    set((state) => {
-      if (quantity <= 0) {
-        const next = { ...state.items };
-        delete next[id];
-        return { items: next };
-      }
-      const existing = state.items[id];
-      if (!existing) return state;
-      return {
-        items: {
-          ...state.items,
-          [id]: { ...existing, quantity },
-        },
-      };
-    }),
-  clear: () => set({ items: {} }),
-}));
+    {
+      name: "shiraz-daru-cart", // unique name for localStorage key
+    }
+  )
+);
 
 export function calculateTotals(items: Record<string, CartLineItem>): {
   subtotal: number;
@@ -87,5 +104,3 @@ export function calculateTotals(items: Record<string, CartLineItem>): {
   }
   return { subtotal, itemCount };
 }
-
-

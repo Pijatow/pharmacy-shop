@@ -50,3 +50,9 @@ export async function logoutUser(refreshToken: string) {
         console.error("Token revocation failed", error);
     }
 }
+
+
+export async function getMe() {
+    const response = await api.get("/api/profile/");
+    return response.data;
+}
