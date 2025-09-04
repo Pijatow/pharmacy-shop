@@ -15,7 +15,8 @@ from rest_framework_simplejwt.views import (
     token_refresh,
     token_verify,
 )
-from accounts.views import RegisterView
+from accounts.views import RegisterView, UserProfileView
+
 
 SIMPLE_JWT_URLS = [
     path("", token_obtain_pair, name="jwt-obtain"),
@@ -34,5 +35,6 @@ router.register(r"comments", CommentViewSet, basename="comment")
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("jwt/", include(SIMPLE_JWT_URLS)),
+    path("api/profile/", UserProfileView.as_view(), name="profile"),
     path("api/", include(router.urls)),
 ]
