@@ -36,5 +36,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("jwt/", include(SIMPLE_JWT_URLS)),
     path("api/profile/", UserProfileView.as_view(), name="profile"),
+    path("api/", include("orders.urls")),
     path("api/", include(router.urls)),
 ]
