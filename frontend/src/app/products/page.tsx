@@ -14,12 +14,20 @@ export default async function ProductsPage({
   const params = await searchParams;
   const page = Number(params.page ?? 1);
   const pageSize = Number(params.page_size ?? 12);
-  const { results, next, previous, count } = await fetchProducts<Record<string, unknown>>({
+  const { results, next, previous, count } = await fetchProducts<
+    Record<string, unknown>
+  >({
     page,
     page_size: pageSize,
   });
 
   const totalPages = Math.max(1, Math.ceil(count / pageSize));
+
+  // Function to convert numbers to Persian numerals
+  const toPersianDigits = (num: number) => {
+    const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+    return String(num).replace(/[0-9]/g, (d) => persianDigits[parseInt(d)]);
+  };
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
@@ -38,20 +46,33 @@ export default async function ProductsPage({
       </div>
       <div className="flex items-center justify-between mt-6 text-sm">
         <div>
-          Page {page} of {totalPages}
+          صفحه {toPersianDigits(page)} از {toPersianDigits(totalPages)}
         </div>
         <div className="flex gap-2">
           <Link
-            href={{ pathname: "/products", query: { page: Math.max(1, page - 1), page_size: pageSize } }}
-            className={`px-3 py-1 rounded border ${previous ? "" : "opacity-50 pointer-events-none"}`}
+            href={{
+              pathname: "/products",
+              query: { page: Math.max(1, page - 1), page_size: pageSize },
+            }}
+            className={`px-3 py-1 rounded border ${
+              previous ? "" : "opacity-50 pointer-events-none"
+            }`}
           >
-            Prev
+            قبلی
           </Link>
           <Link
-            href={{ pathname: "/products", query: { page: Math.min(totalPages, page + 1), page_size: pageSize } }}
-            className={`px-3 py-1 rounded border ${next ? "" : "opacity-50 pointer-events-none"}`}
+            href={{
+              pathname: "/products",
+              query: {
+                page: Math.min(totalPages, page + 1),
+                page_size: pageSize,
+              },
+            }}
+            className={`px-3 py-1 rounded border ${
+              next ? "" : "opacity-50 pointer-events-none"
+            }`}
           >
-            Next
+            بعدی
           </Link>
         </div>
       </div>

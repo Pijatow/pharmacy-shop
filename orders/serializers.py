@@ -23,6 +23,9 @@ class OrderSerializer(serializers.ModelSerializer):
             "phone_number",
             "address",
             "post_code",
+            "total_paid",
+            "created_at",
+            "status",
             "items",
         ]
 
@@ -46,7 +49,6 @@ class OrderSerializer(serializers.ModelSerializer):
                 order=order,
                 product=product,
                 quantity=quantity,
-                price_at_purchase=price_at_purchase,
             )
 
         order.total_paid = grand_total

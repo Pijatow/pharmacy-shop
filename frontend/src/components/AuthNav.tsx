@@ -5,24 +5,29 @@ import { useAuthStore } from "@/store/auth";
 import { logoutUser } from "@/lib/auth";
 
 export function AuthNav() {
-  const { accessToken, refreshToken, logout } = useAuthStore();
-  const isLoggedIn = !!accessToken;
+  const { user, refreshToken, logout } = useAuthStore();
+  const isLoggedIn = !!user;
 
   const handleLogout = async () => {
     if (refreshToken) {
       await logoutUser(refreshToken);
     }
-    logout(); // This clears the state on the frontend
+    logout();
   };
 
   if (isLoggedIn) {
     return (
-      <button
-        onClick={handleLogout}
-        className="hover:text-[color:var(--color-brand)] transition-colors"
-      >
-        خروج
-      </button>
+      <div className="flex items-center gap-4">
+        <Link href="/profile" className="text-sm font-medium hover:underline">
+          حساب کاربری
+        </Link>
+        <button
+          onClick={handleLogout}
+          className="hover:text-[color:var(--color-brand)] transition-colors text-sm"
+        >
+          خروج
+        </button>
+      </div>
     );
   }
 
