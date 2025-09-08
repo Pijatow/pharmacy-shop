@@ -1,6 +1,9 @@
+uploaded_media/
 ###############################################################################
 #  PROJECT-SPECIFIC (custom first, so overrides are obvious)
 ###############################################################################
+
+
 
 # Keep the folder but ignore generated migration files
 **/migrations/*

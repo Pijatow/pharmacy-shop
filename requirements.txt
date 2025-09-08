@@ -4,4 +4,5 @@ djangorestframework_simplejwt
 django-cors-headers
 python-dotenv
 django-taggit
+pillow
 ipython
