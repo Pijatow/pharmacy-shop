@@ -1,14 +1,30 @@
-from rest_framework.serializers import ModelSerializer, CharField, IntegerField
+import os
+from rest_framework import serializers
 
 from .models import Brand, Product, Collection, Comment
 
 from taggit.serializers import TagListSerializerField, TaggitSerializer
 
 
-class ProductSerializer(TaggitSerializer, ModelSerializer):
+class ProductSerializer(TaggitSerializer, serializers.ModelSerializer):
     tags = TagListSerializerField()
-    brand_id = IntegerField(source='brand.id')
-    brand_name = CharField(source='brand.name')
+    brand_id = serializers.IntegerField(source="brand.id")
+    brand_name = serializers.CharField(source="brand.name")
+    pictures = serializers.SerializerMethodField()
+
+    def get_pictures(self, obj):
+        if not obj.picture:
+            return None
+
+        request = self.context.get("request")
+        original_url = obj.picture.url
+        base_url, extension = os.path.splitext(original_url)
+        urls = {
+            "low": request.build_absolute_uri(f"{base_url}_low{extension}"),
+            "medium": request.build_absolute_uri(f"{base_url}_medium{extension}"),
+            "high": request.build_absolute_uri(f"{base_url}_high{extension}"),
+        }
+        return urls
 
     class Meta:
         model = Product
@@ -24,22 +40,46 @@ class ProductSerializer(TaggitSerializer, ModelSerializer):
             "created_at",
             "last_updated_at",
             "tags",
+            "pictures",
         ]
 
 
-class BrandSerializer(ModelSerializer):
+class BrandSerializer(serializers.ModelSerializer):
+    pictures = serializers.SerializerMethodField()
+
     class Meta:
         model = Brand
-        fields = "__all__"
+        # fields = "__all__"
+        fields = [
+            "id",
+            "creator",
+            "name",
+            "description",
+            "pictures"
+        ]
+
+    def get_pictures(self, obj):
+        if not obj.picture:
+            return None
+
+        request = self.context.get("request")
+        original_url = obj.picture.url
+        base_url, extension = os.path.splitext(original_url)
+        urls = {
+            "low": request.build_absolute_uri(f"{base_url}_low{extension}"),
+            "medium": request.build_absolute_uri(f"{base_url}_medium{extension}"),
+            "high": request.build_absolute_uri(f"{base_url}_high{extension}"),
+        }
+        return urls
 
 
-class CollectionSerializer(ModelSerializer):
+class CollectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Collection
         fields = "__all__"
 
 
-class CommentSerializer(ModelSerializer):
+class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = "__all__"
