@@ -31,7 +31,7 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = [CommentInline]
 
     fieldsets = (
-        ("Core Information", {"fields": ("name", "brand", "description", "tags")}),
+        ("Core Information", {"fields": ("name", "brand", "description", "picture", "tags")}),
         ("Pricing and Creator", {"fields": ("price", "creator")}),
         ("Timestamps", {"fields": ("created_at", "last_updated_at")}),
     )
@@ -48,7 +48,7 @@ class CollectionAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ("product", "author", "text")
+    list_display = ("product", "author", "text", "created_at")
     list_filter = ("author",)
-    search_fields = ("text", "product__name", "author__username")
-    raw_id_fields = ("author", "product")
+    search_fields = ("text", "product__name", "author__username", "author__email")
+    raw_id_fields = ("author", "product", "created_at")

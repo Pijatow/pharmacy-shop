@@ -8,6 +8,7 @@ from accounts.models import CustomUser
 from taggit.managers import TaggableManager
 
 from .utils import generate_picture_versions
+from .validators import validate_file_size
 
 
 def get_brand_image_upload_path(instance, filename):
@@ -21,7 +22,9 @@ class Brand(models.Model):
         CustomUser, on_delete=models.PROTECT, related_name="brands"
     )
     name = models.CharField(max_length=200, unique=True, blank=False)
-    picture = models.ImageField(upload_to=get_brand_image_upload_path)
+    picture = models.ImageField(
+        upload_to=get_brand_image_upload_path, validators=[validate_file_size]
+    )
     description = models.TextField(max_length=1000, blank=True)
 
     def save(self, *args, **kwargs):
@@ -42,7 +45,7 @@ def get_unknown_brand():
 
 
 def get_product_image_upload_path(instance, filename):
-    extension = os.path.splittext(filename)[1]
+    extension = os.path.splitext(filename)[1]
     unique_filename = f"{uuid.uuid4()}{extension}"
     return os.path.join("products/pictures/", unique_filename)
 
@@ -57,7 +60,9 @@ class Product(models.Model):
         on_delete=models.SET(get_unknown_brand),
         related_name="products",
     )
-    picture = models.ImageField(upload_to=get_product_image_upload_path)
+    picture = models.ImageField(
+        upload_to=get_product_image_upload_path, validators=[validate_file_size]
+    )
     description = models.TextField(max_length=1000, blank=True)
     # Toman, NOT Rial
     price = models.IntegerField(help_text="Price stored in Tomans")
@@ -95,6 +100,7 @@ class Comment(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="comments"
     )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.product.name.upper() + " | " + self.author.username

@@ -50,13 +50,7 @@ class BrandSerializer(serializers.ModelSerializer):
     class Meta:
         model = Brand
         # fields = "__all__"
-        fields = [
-            "id",
-            "creator",
-            "name",
-            "description",
-            "pictures"
-        ]
+        fields = ["id", "creator", "name", "description", "pictures"]
 
     def get_pictures(self, obj):
         if not obj.picture:
@@ -80,6 +74,8 @@ class CollectionSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source="author.email")
+
     class Meta:
         model = Comment
-        fields = "__all__"
+        fields = ["id", "text", "product", "author", "created_at"]
