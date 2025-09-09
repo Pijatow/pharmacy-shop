@@ -32,6 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl">
+      {/* The font class is now on the body tag, which is the correct place */}
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${vazir.variable} ${vazir.className} antialiased`}
       >

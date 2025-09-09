@@ -2,13 +2,15 @@ export type InferredProductFields = {
   id: string | number | null;
   name: string;
   description: string | null;
-  imageUrl: string | null;
+  // This is now an object with different sizes
+  pictures: { low: string; medium: string; high: string } | null;
   price: number | null;
   currency: string | null;
   brandName: string | null;
   brandId: string | number | null;
 };
 
+// ... (keep the readFirstString, readFirstNumber, and readId functions as they are)
 function readFirstString(obj: Record<string, unknown>, keys: string[]): string | null {
   for (const key of keys) {
     const value = obj[key];
@@ -35,6 +37,8 @@ function readId(obj: Record<string, unknown>): string | number | null {
   return null;
 }
 
+
+// Replace the old inferProductFields function with this new one
 export function inferProductFields(product: Record<string, unknown>): InferredProductFields {
   const name =
     readFirstString(product, [
@@ -45,10 +49,18 @@ export function inferProductFields(product: Record<string, unknown>): InferredPr
     ]) ?? "Unnamed";
 
   const description =
-    readFirstString(product, ["description", "detail", "short_description"]) ?? null;
+    readFirstString(product, ["description", "detail", "short_description"]) ??
+    null;
 
-  const imageUrl =
-    readFirstString(product, ["image", "image_url", "thumbnail", "photo"]) ?? null;
+  // New logic for parsing the pictures object
+  const pictures =
+    product.pictures &&
+      typeof product.pictures === "object" &&
+      "low" in product.pictures &&
+      "medium" in product.pictures &&
+      "high" in product.pictures
+      ? (product.pictures as { low: string; medium: string; high: string })
+      : null;
 
   const price = readFirstNumber(product, [
     "price",
@@ -64,7 +76,9 @@ export function inferProductFields(product: Record<string, unknown>): InferredPr
   let brandName: string | null = null;
   let brandId: string | number | null = null;
   const brandField = (product as Record<string, unknown>)["brand"];
-  const brandIdField = (product as Record<string, unknown>)["brand_id"] ?? (product as Record<string, unknown>)["brandId"];
+  const brandIdField =
+    (product as Record<string, unknown>)["brand_id"] ??
+    (product as Record<string, unknown>)["brandId"];
   if (brandField && typeof brandField === "object") {
     if ("name" in brandField) {
       const bn = (brandField as Record<string, unknown>)["name"];
@@ -72,7 +86,10 @@ export function inferProductFields(product: Record<string, unknown>): InferredPr
     }
     if ("id" in brandField) {
       const bid = (brandField as Record<string, unknown>)["id"];
-      if (typeof bid === "number" || (typeof bid === "string" && bid.trim().length > 0)) {
+      if (
+        typeof bid === "number" ||
+        (typeof bid === "string" && bid.trim().length > 0)
+      ) {
         brandId = bid as string | number;
       }
     }
@@ -82,10 +99,18 @@ export function inferProductFields(product: Record<string, unknown>): InferredPr
     brandId = brandField;
   }
   if (!brandName) {
-    brandName = readFirstString(product, ["brand_name", "brandName", "brand", "brandTitle"]);
+    brandName = readFirstString(product, [
+      "brand_name",
+      "brandName",
+      "brand",
+      "brandTitle",
+    ]);
   }
   if (!brandId) {
-    if (typeof brandIdField === "number" || (typeof brandIdField === "string" && brandIdField.trim().length > 0)) {
+    if (
+      typeof brandIdField === "number" ||
+      (typeof brandIdField === "string" && brandIdField.trim().length > 0)
+    ) {
       brandId = brandIdField as string | number;
     }
   }
@@ -94,13 +119,10 @@ export function inferProductFields(product: Record<string, unknown>): InferredPr
     id: readId(product),
     name,
     description,
-    imageUrl,
+    pictures, // Use the new pictures object
     price,
     currency,
     brandName,
     brandId,
   };
 }
-
-
-

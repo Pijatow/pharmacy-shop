@@ -41,9 +41,6 @@ export async function loginUser(data: LoginInput) {
 
 export async function logoutUser(refreshToken: string) {
     try {
-        // Note: Your DRF backend might expect 'token' instead of 'refresh'
-        // depending on the blacklist app's configuration.
-        // We will assume 'refresh' for now as it's common.
         await api.post("/jwt/revoke/", { refresh: refreshToken });
     } catch (error) {
         // Fail silently. The user is logged out on the frontend anyway.

@@ -13,23 +13,23 @@ export function ProductCard({ product }: { product: Record<string, unknown> }) {
 
   return (
     <div className="border rounded-lg p-3 flex flex-col gap-3 border-[color:var(--color-accent)]/30 bg-[color:var(--color-surface)]/40">
-      {/* Image Link */}
-      {p.imageUrl ? (
-        <Link
-          href={hasValidId ? `/products/${idForHref}` : "#"}
-          className="relative w-full h-40 overflow-hidden rounded-md bg-black/5 block"
-        >
-          <Image src={p.imageUrl} alt={p.name} fill className="object-cover" />
-        </Link>
-      ) : (
-        <Link
-          href={hasValidId ? `/products/${idForHref}` : "#"}
-          className="w-full h-40 rounded-md bg-black/5 block"
-        />
-      )}
+      <Link
+        href={hasValidId ? `/products/${idForHref}` : "#"}
+        className="relative w-full h-40 overflow-hidden rounded-md bg-black/5 block"
+      >
+        {p.pictures?.low ? (
+          <Image
+            src={p.pictures.low}
+            alt={p.name}
+            fill
+            className="object-cover"
+          />
+        ) : (
+          <div className="w-full h-full bg-gray-200" /> // Placeholder
+        )}
+      </Link>
 
       <div className="flex-1">
-        {/* Title Link */}
         {hasValidId ? (
           <Link
             href={`/products/${idForHref}`}
@@ -41,7 +41,6 @@ export function ProductCard({ product }: { product: Record<string, unknown> }) {
           <div className="font-medium text-[15px]">{p.name}</div>
         )}
 
-        {/* Brand Link */}
         {resolvedBrandName && p.brandId ? (
           <Link
             href={`/brands/${p.brandId}`}
