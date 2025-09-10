@@ -2,13 +2,14 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import type { User } from "@/types/types"; // Import the new User type
 
 type AuthState = {
     accessToken: string | null;
     refreshToken: string | null;
-    user: Record<string, unknown> | null;
+    user: User | null; // Use the User type here
     setTokens: (access: string, refresh: string) => void;
-    setUser: (user: Record<string, unknown> | null) => void;
+    setUser: (user: User | null) => void; // And here
     logout: () => void;
 };
 
@@ -24,7 +25,7 @@ export const useAuthStore = create(
             logout: () => set({ accessToken: null, refreshToken: null, user: null }),
         }),
         {
-            name: "shiraz-daru-auth", // unique name for localStorage key
+            name: "shiraz-daru-auth",
         }
     )
 );

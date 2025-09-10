@@ -4,7 +4,8 @@ import { useAuthStore } from "@/store/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { getMyOrders, deleteOrder } from "@/lib/orders";
-import { Modal } from "@/components/Modal"; // Import the new Modal
+import { Modal } from "@/components/Modal";
+import { formatTomans } from "@/lib/format";
 
 type Order = {
   id: string;
@@ -18,12 +19,11 @@ export default function ProfilePage() {
   const { user, accessToken } = useAuthStore();
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-
-  // State for managing the confirmation modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState<string | null>(null);
 
   const fetchOrders = async () => {
+    setIsLoading(true);
     try {
       const userOrders = await getMyOrders();
       setOrders(userOrders);
@@ -42,23 +42,21 @@ export default function ProfilePage() {
     fetchOrders();
   }, [accessToken, router]);
 
-  // Function to open the modal
   const openConfirmationModal = (orderId: string) => {
     setOrderToDelete(orderId);
     setIsModalOpen(true);
   };
 
-  // Function to handle the actual deletion
   const handleConfirmDelete = async () => {
     if (!orderToDelete) return;
     try {
       await deleteOrder(orderToDelete);
-      fetchOrders(); // Refresh the list
+      fetchOrders();
     } catch (error) {
       console.error("Failed to delete order:", error);
       alert("خطایی در حذف سفارش رخ داد.");
     } finally {
-      setIsModalOpen(false); // Close the modal
+      setIsModalOpen(false);
       setOrderToDelete(null);
     }
   };
@@ -126,7 +124,7 @@ export default function ProfilePage() {
                     <span>
                       مبلغ کل:{" "}
                       {typeof order.total_paid === "number"
-                        ? `${order.total_paid.toLocaleString("fa-IR")} تومان`
+                        ? formatTomans(order.total_paid)
                         : "نامشخص"}
                     </span>
                   </div>
@@ -137,7 +135,6 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* The Modal for confirmation */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

@@ -14,7 +14,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const userData = await getMe();
         setUser(userData);
       } catch (error) {
-        // If getMe fails (e.g., 401 error), it means no valid session
+        // Log the error for debugging, which resolves the 'no-unused-vars' warning
+        console.error("No valid session found on initial load:", error);
         logout();
       } finally {
         setIsLoading(false);
@@ -24,8 +25,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkUserSession();
   }, [setUser, logout]);
 
-  // Optional: You can show a loading spinner for the whole app
-  // while the session is being checked. For now, we'll just show nothing.
   if (isLoading) {
     return null;
   }

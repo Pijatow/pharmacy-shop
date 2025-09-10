@@ -6,6 +6,7 @@ import { registerSchema, type RegisterInput, registerUser } from "@/lib/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import axios from "axios"; // Import axios to check for axios-specific errors
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -22,13 +23,11 @@ export default function RegisterPage() {
     setErrorMessage(null);
     try {
       await registerUser(data);
-      // On successful registration, redirect to the login page
       router.push("/login");
-    } catch (error: any) {
-      // Handle potential errors from the server
-      if (error.response?.data) {
-        // You can make this more specific based on your DRF error format
-        const serverErrors = error.response.data;
+    } catch (error: unknown) {
+      // Changed from 'any' to 'unknown'
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const serverErrors = error.response.data as Record<string, string[]>;
         const messages = Object.values(serverErrors).flat();
         setErrorMessage(messages.join(" "));
       } else {

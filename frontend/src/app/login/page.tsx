@@ -7,6 +7,7 @@ import { useAuthStore } from "@/store/auth";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, Suspense } from "react";
+import axios from "axios"; // Import axios to check for axios-specific errors
 
 function LoginPageContent() {
   const router = useRouter();
@@ -27,15 +28,19 @@ function LoginPageContent() {
     try {
       const { access, refresh } = await loginUser(data);
       setTokens(access, refresh);
-
       const userData = await getMe();
       setUser(userData);
-
-      // Redirect to the 'next' URL if it exists, otherwise to homepage
       const nextUrl = searchParams.get("next") || "/";
       router.push(nextUrl);
-    } catch (error: any) {
-      setErrorMessage("ایمیل یا رمز عبور اشتباه است.");
+    } catch (error: unknown) {
+      // Changed from 'any' to 'unknown'
+      if (axios.isAxiosError(error) && error.response) {
+        setErrorMessage("ایمیل یا رمز عبور اشتباه است.");
+      } else {
+        setErrorMessage(
+          "یک خطای پیش‌بینی نشده رخ داد. لطفاً دوباره تلاش کنید."
+        );
+      }
       console.error("Login failed:", error);
     }
   }
@@ -51,7 +56,6 @@ function LoginPageContent() {
             {errorMessage}
           </div>
         )}
-
         <div>
           <label
             htmlFor="email"
@@ -106,7 +110,6 @@ function LoginPageContent() {
   );
 }
 
-// Wrap with Suspense because useSearchParams is used
 export default function LoginPage() {
   return (
     <Suspense fallback={<div>در حال بارگذاری...</div>}>

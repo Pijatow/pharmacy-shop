@@ -6,6 +6,14 @@ import { formatTomans } from "@/lib/format";
 import { ProductCartControls } from "@/components/ProductCartControls";
 import { CommentSection } from "@/components/CommentSection";
 
+// Define a type for the comment object we expect from the API
+type Comment = {
+  id: number;
+  author: string;
+  text: string;
+  created_at: string;
+};
+
 export default async function ProductDetail({
   params,
 }: {
@@ -47,12 +55,11 @@ export default async function ProductDetail({
     }
   }
 
-  // Extracting initial comments for the CommentSection component
-  const initialComments = (product?.comments as any[]) || [];
+  // Use the new Comment type for type safety, replacing 'any[]'
+  const initialComments = (product?.comments as Comment[]) || [];
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 space-y-8">
-      {/* Product primary section */}
       <section className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-6 items-start">
         <div className="relative w-full aspect-[3/4] rounded-md bg-black/10 overflow-hidden">
           {p.pictures?.medium ? (
@@ -63,7 +70,7 @@ export default async function ProductDetail({
               className="object-cover"
             />
           ) : (
-            <div className="w-full h-full bg-gray-200" /> // Placeholder
+            <div className="w-full h-full bg-gray-200" />
           )}
         </div>
         <div className="space-y-3">
@@ -87,7 +94,6 @@ export default async function ProductDetail({
       </section>
       <hr className="border-[color:var(--color-accent)]/30" />
 
-      {/* Collections and Tags */}
       <div className="space-y-4">
         {collections.length > 0 && (
           <section className="space-y-2">
@@ -120,7 +126,6 @@ export default async function ProductDetail({
       </div>
 
       <hr className="border-[color:var(--color-accent)]/30" />
-      {/* Comments */}
       <CommentSection productId={p.id} initialComments={initialComments} />
     </div>
   );
