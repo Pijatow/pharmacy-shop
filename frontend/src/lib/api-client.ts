@@ -1,10 +1,16 @@
 import axios from "axios";
 import { useAuthStore } from "@/store/auth";
 
-const defaultBaseUrl = "http://127.0.0.1:8000";
+// Ensure the base URL is defined in the environment variables.
+if (!process.env.NEXT_PUBLIC_API_BASE_URL) {
+  throw new Error(
+    "NEXT_PUBLIC_API_BASE_URL is not defined. Please check your frontend/.env file."
+  );
+}
 
 export const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL ?? defaultBaseUrl,
+  // Use the environment variable directly.
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -30,5 +36,7 @@ api.interceptors.request.use(
 );
 
 export function getApiBaseUrl(): string {
-  return api.defaults.baseURL ?? defaultBaseUrl;
+  // This function now simply returns the configured baseURL.
+  // We've already checked that it's defined when the app starts.
+  return api.defaults.baseURL!;
 }
