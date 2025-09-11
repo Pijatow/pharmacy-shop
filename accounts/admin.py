@@ -22,9 +22,12 @@ class CustomUserAdmin(UserAdmin):
     model = CustomUser
     fieldsets = (
         ("cridentials", {"fields": ("username", "email", "password")}),
-        ("acess", {"fields": ("is_staff", "is_superuser", "user_permissions")}),
+        (
+            "acess",
+            {"fields": ("is_active", "is_staff", "is_superuser", "user_permissions")},
+        ),
     )
-    list_display = ['username', 'email', 'is_staff', 'is_superuser']
+    list_display = ["username", "email", "is_active", "is_staff", "is_superuser"]
 
 
 admin.site.register(CustomUser, CustomUserAdmin)
