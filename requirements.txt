@@ -7,3 +7,4 @@ django-taggit
 pillow
 ipython
 psycopg
+gunicorn
