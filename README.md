@@ -110,7 +110,9 @@ The Django backend runs from the project's root directory.
 
 6. Run the Backend Server:
 
-        python manage.py runserver
+        python manage.py runserver -d
+
+    > **Note:** The `-d` or `--development` flag activates the development settings. Use this flag when running any `manage.py` command during development (e.g., `python manage.py runserver -d`, `python manage.py migrate -d`).
 
 The Django API should now be running at <http://127.0.0.1:8000>.
 
