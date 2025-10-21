@@ -94,6 +94,15 @@ class Collection(models.Model):
     products = models.ManyToManyField(Product, blank=True, related_name="collections")
     tags = TaggableManager(blank=True)
 
+    @property
+    def related_products(self):
+        initial_queryset = self.products.all()
+        for tag in self.tags.all():
+            initial_queryset = initial_queryset | Product.objects.filter(
+                tags__name__in=[tag.name]
+            )
+        return initial_queryset.distinct()
+
     def __str__(self):
         return self.name
 
