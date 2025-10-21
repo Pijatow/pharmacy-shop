@@ -23,7 +23,10 @@ class Brand(models.Model):
     )
     name = models.CharField(max_length=200, unique=True, blank=False)
     picture = models.ImageField(
-        upload_to=get_brand_image_upload_path, validators=[validate_file_size]
+        blank=True,
+        null=True,
+        upload_to=get_brand_image_upload_path,
+        validators=[validate_file_size],
     )
     description = models.TextField(max_length=1000, blank=True)
 
@@ -61,11 +64,13 @@ class Product(models.Model):
         related_name="products",
     )
     picture = models.ImageField(
-        upload_to=get_product_image_upload_path, validators=[validate_file_size]
+        blank=False,
+        upload_to=get_product_image_upload_path,
+        validators=[validate_file_size],
     )
     description = models.TextField(max_length=1000, blank=True)
     # Toman, NOT Rial
-    price = models.IntegerField(help_text="Price stored in Tomans")
+    price = models.IntegerField(blank=False, help_text="Price stored in Tomans")
     created_at = models.DateTimeField(auto_now_add=True)
     last_updated_at = models.DateTimeField(auto_now=True)
     tags = TaggableManager(blank=True)
@@ -84,9 +89,19 @@ class Collection(models.Model):
     creator = models.ForeignKey(
         CustomUser, on_delete=models.PROTECT, related_name="collections"
     )
-    name = models.CharField(max_length=200)
-    description = models.TextField(max_length=500)
-    products = models.ManyToManyField(Product, related_name="collections")
+    name = models.CharField(max_length=200, blank=False)
+    description = models.TextField(max_length=500, blank=True)
+    products = models.ManyToManyField(Product, blank=True, related_name="collections")
+    tags = TaggableManager(blank=True)
+
+    @property
+    def related_products(self):
+        initial_queryset = self.products.all()
+        for tag in self.tags.all():
+            initial_queryset = initial_queryset | Product.objects.filter(
+                tags__name__in=[tag.name]
+            )
+        return initial_queryset.distinct()
 
     def __str__(self):
         return self.name
@@ -96,7 +111,7 @@ class Comment(models.Model):
     author = models.ForeignKey(
         CustomUser, on_delete=models.PROTECT, related_name="comments"
     )
-    text = models.TextField(max_length=1000)
+    text = models.TextField(max_length=1000, blank=False)
     product = models.ForeignKey(
         Product, on_delete=models.CASCADE, related_name="comments"
     )
