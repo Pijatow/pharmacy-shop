@@ -8,6 +8,18 @@ from products.models import Product, Brand, Comment, Collection
 from accounts.models import CustomUser
 
 
+class ProductInline(admin.TabularInline):
+    model = Product.collections.through
+    extra = 1
+
+
+class CollectionInline(admin.TabularInline):
+    model = Collection.products.through
+    raw_id_fields = ["collection"]
+    extra = 1
+    classes = ["wide"]
+
+
 class CommentInline(admin.TabularInline):
     model = Comment
     raw_id_fields = ["author"]
