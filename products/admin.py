@@ -62,11 +62,31 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(Collection)
 class CollectionAdmin(admin.ModelAdmin):
-    list_display = ("name", "creator")
+    list_display = ("name", "related_products_display")
     search_fields = ("name",)
-    raw_id_fields = ("creator",)
     # Use filter_horizontal for a better ManyToMany selection widget.
     filter_horizontal = ("products",)
+    readonly_fields = ["related_products_display"]
+    fieldsets = (
+        (None, {"fields": ["name", "description"]}),
+        (None, {"fields": ["products", "tags", "related_products_display"]}),
+    )
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            user = CustomUser.objects.get(id=request.user.id)
+            obj.creator = user
+        obj.save()
+
+    def related_products_display(self, obj):
+        related_products = obj.related_products
+        if not related_products.exists():
+            return "No RelatedProduct"
+        links = []
+        for product in related_products:
+            url = reverse("admin:products_product_change", args=[product.id])
+            links.append(f'<a href="{url}">{product.name}</a>')
+        return mark_safe(", ".join(links))
 
 
 @admin.register(Comment)
