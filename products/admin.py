@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 
-from rangefilter.filters import NumericRangeFilter, DateRangeQuickSelectListFilter
+from rangefilter.filters import NumericRangeFilter
 
 from products.models import Product, Brand, Comment, Collection
 from accounts.models import CustomUser
