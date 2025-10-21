@@ -14,9 +14,32 @@ class CommentInline(admin.TabularInline):
 
 @admin.register(Brand)
 class BrandAdmin(admin.ModelAdmin):
-    list_display = ("name", "creator")
-    search_fields = ("name",)
-    raw_id_fields = ("creator",)
+    list_display = ["id", "name", "creator"]
+    list_display_links = ["id", "name"]
+    readonly_fields = ["id", "creator"]
+    search_fields = ("name", "description", "id")
+    # fields = ["id", "creator", "name", "description", "picture"]
+    fieldsets = [
+        (
+            None,
+            {
+                "fields": [
+                    "id",
+                    "creator",
+                ],
+            },
+        ),
+        (
+            None,
+            {"fields": ["name", "description", "picture"]},
+        ),
+    ]
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            user = CustomUser.objects.get(id=request.user.id)
+            obj.creator = user
+        obj.save()
 
 
 @admin.register(Product)
