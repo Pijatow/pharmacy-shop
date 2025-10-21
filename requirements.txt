@@ -8,3 +8,4 @@ pillow
 ipython
 psycopg
 gunicorn
+django-admin-rangefilter
