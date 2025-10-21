@@ -89,13 +89,12 @@ class ProductAdmin(admin.ModelAdmin):
 class CollectionAdmin(admin.ModelAdmin):
     list_display = ("name", "related_products_display")
     search_fields = ("name",)
-    # Use filter_horizontal for a better ManyToMany selection widget.
-    filter_horizontal = ("products",)
     readonly_fields = ["related_products_display"]
     fieldsets = (
-        (None, {"fields": ["name", "description"]}),
-        (None, {"fields": ["products", "tags", "related_products_display"]}),
+        (None, {"fields": ["name", "description", "tags"]}),
+        ("Result Products", {"fields": ["related_products_display"]}),
     )
+    inlines = [ProductInline]
 
     def save_model(self, request, obj, form, change):
         if not change:
