@@ -24,6 +24,7 @@ class CommentInline(admin.TabularInline):
     model = Comment
     raw_id_fields = ["author"]
     extra = 1
+    classes = ["collapse"]
 
 
 @admin.register(Brand)
@@ -32,7 +33,6 @@ class BrandAdmin(admin.ModelAdmin):
     list_display_links = ["id", "name"]
     readonly_fields = ["id", "creator"]
     search_fields = ("name", "description", "id")
-    # fields = ["id", "creator", "name", "description", "picture"]
     fieldsets = [
         (
             None,
@@ -58,24 +58,33 @@ class BrandAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-
     list_display = ("id", "name", "brand", "price")
     list_editable = ["price"]
     list_display_links = ["id", "name"]
     list_filter = ("brand", ("price", NumericRangeFilter), "tags")
     search_fields = ("name", "brand__name", "description")
-    # Use raw_id_fields for better performance with many users or brands.
     raw_id_fields = ("brand",)
     readonly_fields = ("id", "creator", "created_at", "last_updated_at")
-    # Embed the Comment editor into the Product page.
-    inlines = [CommentInline]
+    inlines = [CollectionInline, CommentInline]
 
     fieldsets = (
         (
             "Information",
-            {"fields": ("brand", "name", "description", "price", "tags", "picture")},
+            {
+                "fields": (
+                    ("name", "brand"),
+                    "description",
+                    ("price", "tags"),
+                    "picture",
+                )
+            },
         ),
-        ("Timestamps", {"fields": ("created_at", "last_updated_at")}),
+        (
+            "Timestamps",
+            {
+                "fields": (("created_at", "last_updated_at"),),
+            },
+        ),
     )
 
     def save_model(self, request, obj, form, change):
