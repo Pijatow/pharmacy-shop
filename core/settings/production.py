@@ -25,6 +25,6 @@ DATABASES = {
 # Static Settings
 # ==================================================================
 STATIC_URL = "static/"
-STATIC_ROOT = "/var/www/pharmacy-shop/static"
+STATIC_ROOT = f"/var/www/{os.getenv("DOMAIN_NAME")}/static"
 MEDIA_URL = "media/"
-MEDIA_ROOT = "/var/www/pharmacy-shop/uploaded_media/"
+MEDIA_ROOT = f"/var/www/{os.getenv("DOMAIN_NAME")}/uploaded_media/"
