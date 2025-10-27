@@ -9,7 +9,7 @@ from taggit.serializers import TagListSerializerField, TaggitSerializer
 class ProductSerializer(TaggitSerializer, serializers.ModelSerializer):
     tags = TagListSerializerField()
     brand_id = serializers.IntegerField(source="brand.id")
-    brand_name = serializers.CharField(source="brand.name")
+    brand_name = serializers.CharField(source="brand.name", read_only=True)
     pictures = serializers.SerializerMethodField()
 
     def get_pictures(self, obj):
